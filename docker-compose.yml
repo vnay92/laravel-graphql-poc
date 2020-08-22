@@ -1,17 +1,9 @@
 version: '3.7'
 
 services:
-    memcached:
-        image: memcached:alpine
-        ports:
-            - '11211:11211'
-        entrypoint:
-            - memcached
-            - -m 64
-        logging:
-            options:
-                max-file: '10'
-                max-size: '200k'
+
+    redis:
+        image: redis:alpine
 
     mysql:
         image: 'mysql:5.7'
@@ -34,12 +26,13 @@ services:
             context: .
         depends_on:
             - mysql
-            - memcached
+            - redis
         links:
             - mysql
-            - memcached
+            - redis
         volumes:
             - '.:/app'
+            - './.server-configs/xdebug/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini'
         ports:
             - "8000:8000"
         logging:
